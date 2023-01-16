@@ -269,7 +269,6 @@ cdef class PLTree:
         Array containing the indices of the left child nodes. For leaf nodes these indices are -1.
     split_feature : array-like of shape (num_nodes,)
         Array containing the indices of features, which are used for splitting at the corresponding node.
-        For leaf nodes these indices are -1.
     threshold : array-like of shape (num_nodes,)
         Array of splitting thresholds.
     value : array-like of shape (num_nodes,)
@@ -386,6 +385,11 @@ cdef class PLTree:
         self.threshold = np.array(threshold, dtype=np.float64)
         self.value = np.array(value, dtype=np.float64)
         self.left_is_default = (self.child_left == np.asarray(child_default))
+
+        # assert that leaf nodes hold -1 as (dummy) feature:
+        for node in range(self.num_nodes):
+            if self.child_left[node] < 0:
+                self.split_feature[node] = -1
         
         if coeffs is not None:
             self.is_linear = True

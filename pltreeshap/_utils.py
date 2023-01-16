@@ -15,6 +15,11 @@ def fullname(obj):
     return module + '.' + obj.__class__.__name__
 
 
+def _from_treeshap(explainer):
+    """An auxiliary function for converting models stored by shap.TreeExplainer"""
+    return {'trees': [tree.__dict__ for tree in explainer.model.trees]}
+
+
 def _from_xgboost(model):
     """An auxiliary function for converting XGBoost models."""
 
@@ -250,10 +255,10 @@ def convert_model(model, **kwargs):
     
     That format is a dictionary with the attribute 'trees' holding a list of trees.
     Each tree itself is a dictionary with the following attributes:
-    * 'children_left' : array containing the index of left child for each node
+    * 'children_left' : array containing the index of left child for each node (-1 for leaf nodes)
     * 'children_right' : array containing the index of right child for each node
     * 'children_default': array containing the index of default child for each node
-    * 'features' : array containing the split features for each node (-1 for leaf nodes)
+    * 'features' : array containing the split features for each node
     * 'thresholds' : array containing the split thresholds for each node
     * 'values' : array containing the values for each node (in case of p.w. constant tree)
     * 'node_sample_weight' : array containing the node counts for each node
@@ -263,9 +268,11 @@ def convert_model(model, **kwargs):
     """
     
     model_name = fullname(model)
-    if model_name in ['xgboost.core.Booster',
-                      'xgboost.sklearn.XGBRegressor',
-                      'xgboost.sklearn.XGBClassifier']:
+    if model_name == 'shap.explainers._tree.Tree':
+        return _from_treeshap(model)
+    elif model_name in ['xgboost.core.Booster',
+                        'xgboost.sklearn.XGBRegressor',
+                        'xgboost.sklearn.XGBClassifier']:
         return _from_xgboost(model)
     elif model_name in ['lightgbm.basic.Booster',
                         'lightgbm.sklearn.LGBMRegressor',
