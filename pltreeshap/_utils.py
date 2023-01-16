@@ -20,6 +20,7 @@ def _from_xgboost(model):
 
     if hasattr(model, 'get_booster'):
         model = model.get_booster()
+    feature_names = model.feature_names
     model = model.get_dump(with_stats=True, dump_format='json')
     trees = []
     for tree_dump in model:
@@ -56,10 +57,13 @@ def _from_xgboost(model):
                     children_default[idx_parent] = idx_node
             if 'split' in node:
                 values.append(0.)
-                try:
-                    features[idx_node] = int(node['split'])
-                except ValueError:
-                    features[idx_node] = int(node['split'][1:])
+                if feature_names is None:
+                    try:
+                        features[idx_node] = int(node['split'])
+                    except ValueError:
+                        features[idx_node] = int(node['split'][1:])  # remove leading 'f'
+                else:
+                    features[idx_node] = feature_names.index(node['split'])
                 if 'missing' in node:
                     thresholds[idx_node] = node['split_condition']
                     idx_left = node['yes']
