@@ -732,17 +732,33 @@ cdef class PLTree:
                             current_feature_not_in_A = True
                             current_feature_not_in_NB = True
                         if child_x == child_data:
-                            added_feature_to_A[child_x] = 0 if current_feature_not_in_A else 2
-                            added_feature_to_NB[child_x] = 0 if current_feature_not_in_NB else 2
+                            # added_feature_to_A[child_x] = 0 if current_feature_not_in_A else 2
+                            if current_feature_not_in_A:
+                                added_feature_to_A[child_x] = 0
+                            else:
+                                added_feature_to_A[child_x] = 2
+                            # added_feature_to_NB[child_x] = 0 if current_feature_not_in_NB else 2
+                            if current_feature_not_in_NB:
+                                added_feature_to_NB[child_x] = 0
+                            else:
+                                added_feature_to_NB[child_x] = 2
                             stack.push_back(child_x)
                         else:
                             if current_feature_not_in_NB:
-                                added_feature_to_A[child_x] = 1 if current_feature_not_in_A else 2
+                                # added_feature_to_A[child_x] = 1 if current_feature_not_in_A else 2
+                                if current_feature_not_in_A:
+                                    added_feature_to_A[child_x] = 1
+                                else:
+                                    added_feature_to_A[child_x] = 2
                                 added_feature_to_NB[child_x] = 0
                                 stack.push_back(child_x)
                             if current_feature_not_in_A:
                                 added_feature_to_A[child_data] = 0
-                                added_feature_to_NB[child_data] = 1 if current_feature_not_in_NB else 2
+                                # added_feature_to_NB[child_data] = 1 if current_feature_not_in_NB else 2
+                                if current_feature_not_in_NB:
+                                    added_feature_to_NB[child_data] = 1
+                                else:
+                                    added_feature_to_NB[child_data] = 2
                                 stack.push_back(child_data)
                     else:
                         const_coalition = self.value[node]
@@ -835,30 +851,62 @@ cdef class PLTree:
                     child_rt = self.child_right_true[node]
                     if self.take_left_node(x[k,j], self.threshold[node0], self.left_is_default[node0]):
                         if self.cover[child_lt] > 0.:
-                            added_feature_to_A[child_lt] = 0 if current_feature_not_in_A else 2
-                            added_feature_to_NB[child_lt] = 0 if current_feature_not_in_NB else 2
+                            # added_feature_to_A[child_lt] = 0 if current_feature_not_in_A else 2
+                            if current_feature_not_in_A:
+                                added_feature_to_A[child_lt] = 0
+                            else:
+                                added_feature_to_A[child_lt] = 2
+                            # added_feature_to_NB[child_lt] = 0 if current_feature_not_in_NB else 2
+                            if current_feature_not_in_NB:
+                                added_feature_to_NB[child_lt] = 0
+                            else:
+                                added_feature_to_NB[child_lt] = 2
                             stack.push_back(child_lt)
                         if current_feature_not_in_A and self.cover[child_rt] > 0.:
                             added_feature_to_A[child_rt] = 0
-                            added_feature_to_NB[child_rt] = 1 if current_feature_not_in_NB else 2
+                            # added_feature_to_NB[child_rt] = 1 if current_feature_not_in_NB else 2
+                            if current_feature_not_in_NB:
+                                added_feature_to_NB[child_rt] = 1
+                            else:
+                                added_feature_to_NB[child_rt] = 2
                             stack.push_back(child_rt)
                         child_lf = self.child_left_false[node]
                         if current_feature_not_in_NB and self.cover[child_lf] > 0.:
-                            added_feature_to_A[child_lf] = 1 if current_feature_not_in_A else 2
+                            # added_feature_to_A[child_lf] = 1 if current_feature_not_in_A else 2
+                            if current_feature_not_in_A:
+                                added_feature_to_A[child_lf] = 1
+                            else:
+                                added_feature_to_A[child_lf] = 2
                             added_feature_to_NB[child_lf] = 0
                             stack.push_back(child_lf)
                     else:
                         if self.cover[child_rt] > 0.:
-                            added_feature_to_A[child_rt] = 0 if current_feature_not_in_A else 2
-                            added_feature_to_NB[child_rt] = 0 if current_feature_not_in_NB else 2
+                            # added_feature_to_A[child_rt] = 0 if current_feature_not_in_A else 2
+                            if current_feature_not_in_A:
+                                added_feature_to_A[child_rt] = 0
+                            else:
+                                added_feature_to_A[child_rt] = 2
+                            # added_feature_to_NB[child_rt] = 0 if current_feature_not_in_NB else 2
+                            if current_feature_not_in_NB:
+                                added_feature_to_NB[child_rt] = 0
+                            else:
+                                added_feature_to_NB[child_rt] = 2
                             stack.push_back(child_rt)
                         if current_feature_not_in_A and self.cover[child_lt] > 0.:
                             added_feature_to_A[child_lt] = 0
-                            added_feature_to_NB[child_lt] = 1 if current_feature_not_in_NB else 2
+                            # added_feature_to_NB[child_lt] = 1 if current_feature_not_in_NB else 2
+                            if current_feature_not_in_NB:
+                                added_feature_to_NB[child_lt] = 1
+                            else:
+                                added_feature_to_NB[child_lt] = 2
                             stack.push_back(child_lt)
                         child_rf = self.child_right_false[node]
                         if current_feature_not_in_NB and self.cover[child_rf] > 0.:
-                            added_feature_to_A[child_rf] = 1 if current_feature_not_in_A else 2
+                            # added_feature_to_A[child_rf] = 1 if current_feature_not_in_A else 2
+                            if current_feature_not_in_A:
+                                added_feature_to_A[child_rf] = 1
+                            else:
+                                added_feature_to_A[child_rf] = 2
                             added_feature_to_NB[child_rf] = 0
                             stack.push_back(child_rf)
                 else:
