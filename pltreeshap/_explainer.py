@@ -35,6 +35,7 @@ class PLTreeExplainer:
         Currently, the following models are supported:
         * Gradient Boosting Trees as implemented in LightGBM (https://github.com/microsoft/LightGBM). 
           This includes ensembles with piecewise linear trees (setting `linear_tree=True`; since LightGBM v3.3.0).
+          Models with categorical splits are not supported.
         * Gradient Boosting Trees (with piecewise constant trees) as implemented in XGBoost (https://github.com/dmlc/xgboost).
         * Model Trees as implemented in https://github.com/schufa-innovationlab/model-trees.
           Only  sklearn's LinearRegression and LogisticRegression are supported as leaf models.
@@ -55,6 +56,8 @@ class PLTreeExplainer:
     """
 
     def __init__(self, model, data=None):
+        if data is not None:
+            data = np.asarray(data)
         if not (isinstance(model, dict) and 'trees' in model):
             model = convert_model(model)
         self.trees = []

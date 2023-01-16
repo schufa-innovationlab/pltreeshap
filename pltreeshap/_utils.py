@@ -133,7 +133,10 @@ def _from_lightgbm(model):
                     children_default[idx_parent] = idx_node
             if 'split_index' in node:
                 features[idx_node] = node['split_feature']
-                thresholds[idx_node] = node['threshold']
+                try:
+                    thresholds[idx_node] = node['threshold']
+                except ValueError:
+                    raise ValueError('Models with categorical splits are not supported.')
                 node_sample_weight[idx_node] = node['internal_count']
                 values[idx_node, 0] = node['internal_value']
                 stack.append((node['left_child'], idx_node, True, node['default_left']))
@@ -160,7 +163,7 @@ def _from_lightgbm(model):
         if len(decision_type) == 1:
             tree['decision_type'] = decision_type[0]
         elif len(decision_type) > 1:
-            print(f"Tree contains {decision_type} decision types!")
+            raise ValueError('Tree contains different decision types!')
         if is_linear_tree:
             tree['intercepts'] = intercepts
             tree['coeffs'] = coeffs
